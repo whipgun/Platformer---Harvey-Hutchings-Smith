@@ -1,5 +1,5 @@
 var canvas = document.getElementById("gameCanvas");
-var context = canvas.getContext("2d")
+var context = canvas.getContext("2d");
 
 var startFrameMillis = Date.now();
 var endFrameMillis = Date.now();
