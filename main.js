@@ -24,6 +24,14 @@ function getDeltaTime()
 	return deltaTime;
 }
 
+var deltaTime = getDeltaTime();
+
+var STATE_SPLASH = 0;
+var STATE_GAME = 1;
+var STATE_GAMEOVER = 2;
+
+var gameState = STATE_SPLASH;
+
 var SCREEN_WIDTH = canvas.width;
 var SCREEN_HEIGHT = canvas.height;
 
@@ -37,12 +45,64 @@ chuckNorris.src = "hero.png";
 var player = new Player();
 var keyboard = new Keyboard();
 
+var LAYER_COUNT = 3;
+var MAP = {tw:60, th:15};
+var TILE = 35;
+var TILESET_TILE = TILE * 2;
+var TILESET_PADDING = 2;
+var TILESET_SPACING = 2;
+var TILESET_COUNT_X = 14;
+var TILESET_COUNT_Y = 14;
+
+var tileset = document.createElement("img");
+tileset.src = "tileset.png";
+
+function drawMap()
+{
+ 	for(var layerIdx=0; layerIdx<LAYER_COUNT; layerIdx++)
+ 	{
+ 		var idx = 0;
+ 		for( var y = 0; y < level1.layers[layerIdx].height; y++ )
+ 		{
+ 			for( var x = 0; x < level1.layers[layerIdx].width; x++ )
+ 			{
+ 				if( level1.layers[layerIdx].data[idx] != 0 )
+ 				{
+ 					// the tiles in the Tiled map are base 1 (meaning a value of 0 means no tile), so subtract one from the tileset id to get the
+ 					// correct tile
+ 					var tileIndex = level1.layers[layerIdx].data[idx] - 1;
+ 					var sx = TILESET_PADDING + (tileIndex % TILESET_COUNT_X) * (TILESET_TILE + TILESET_SPACING);
+ 					var sy = TILESET_PADDING + (Math.floor(tileIndex / TILESET_COUNT_Y)) * (TILESET_TILE + TILESET_SPACING);
+ 					context.drawImage(tileset, sx, sy, TILESET_TILE, TILESET_TILE, x*TILE, (y-1)*TILE, TILESET_TILE, TILESET_TILE);
+ 				}
+ 				idx++;
+ 			}
+ 		}
+ 	}
+}
+
+var splashTimer = 0
+function runSplash(deltaTime)
+{
+	splashTimer -= deltaTime;
+    if(splashTimer <= 0)
+        {
+            gameState = STATE_GAME;
+            return;
+        }
+}
+
+function runGame(deltaTime)
+{
+	
+}
+
 function run()
 {
 	context.fillStyle = "#ccc";
 	context.fillRect(0, 0, canvas.width, canvas.height);
 
-	var deltaTime = getDeltaTime();
+	drawMap();
 
 	context.drawImage(chuckNorris, SCREEN_WIDTH/2 - chuckNorris.width/2, SCREEN_HEIGHT/2 - chuckNorris.height/2);
 
@@ -63,6 +123,19 @@ function run()
 	context.fillStyle = "#f00";
 	context.font = "14px Arial";
 	context.fillText("FPS: " + fps, 5, 20, 100);
+
+	switch(gameState)
+    {
+        case STATE_SPLASH:
+                runSplash(deltaTime);
+                break;
+        case STATE_GAME:
+                runGame(deltaTime);
+                break;
+        case STATE_GAMEOVER:
+                runGameOver(deltaTime);
+                break;
+    }
 }
 
 //-------------------- Don't modify anything below here
