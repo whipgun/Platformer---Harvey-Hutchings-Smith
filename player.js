@@ -4,6 +4,7 @@ var Player = function() {
 	this.y = canvas.height/2;
 	this.width = 159;
 	this.height = 163;
+	this.RotSpeed = 2;
 	this.image.src = "hero.png";
 };
 
@@ -14,11 +15,11 @@ Player.prototype.update = function(deltaTime)
 	
 	if(keyboard.isKeyDown(keyboard.KEY_SPACE) == true)
 	{
-		this.rotation -= deltaTime;
+		this.rotation -= this.RotSpeed * deltaTime;
 	}
 	else
 	{
-		this.rotation += deltaTime;
+		this.rotation += this.RotSpeed * deltaTime;
 	}
 }
 

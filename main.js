@@ -24,7 +24,6 @@ function getDeltaTime()
 	return deltaTime;
 }
 
-var deltaTime = getDeltaTime();
 
 var STATE_SPLASH = 0;
 var STATE_GAME = 1;
@@ -45,6 +44,7 @@ chuckNorris.src = "hero.png";
 var player = new Player();
 var keyboard = new Keyboard();
 
+
 var LAYER_COUNT = 3;
 var MAP = {tw:60, th:15};
 var TILE = 35;
@@ -54,8 +54,59 @@ var TILESET_SPACING = 2;
 var TILESET_COUNT_X = 14;
 var TILESET_COUNT_Y = 14;
 
+var LAYER_COUNT = 3;
+var LAYER_BACKGROUND = 0;
+var LAYER_PLATFORMS = 1;
+var LAYER_LADDERS = 2;
+
+//Physics!!!
+var METER = TILE; //1 tile = 1 meter
+var GRAVITY = METER * 9.8 * 6; //6x Gravity (9.8ms^-1)
+var MAXDX = METER * 10; // Max horizontal speed (10 tiles/s)
+var MAXDY = METER * 15; // Max vertical speed (15 tiles/s)
+var ACCEL = MAXDX * 2; // horizontal acceleration - take 1/2 second to reach maxdx
+var FRICTION = MAXDX * 6; // horizontal friction - take 1/6 second to stop from maxdx
+var JUMP = METER * 1500; // A BIIIIG jump! ^_^
+
 var tileset = document.createElement("img");
 tileset.src = "tileset.png";
+
+function cellAtPixelCoord(layer, x,y)
+{
+	if(x<0 || x>SCREEN_WIDTH || y<0)
+		return 1;
+	if(y>SCREEN_HEIGHT)
+		return 0;
+	return cellAtTileCoord(layer, p2t(x), p2t(y));
+};
+
+function cellAtTileCoord(layer, tx, ty)
+{
+	if(tx<0 || tx>=MAP.tw || ty<0)
+		return 1;
+	if(ty>=MAP.th)
+		return 0;
+	return cells[layer][ty][tx];
+};
+
+function tileToPixel(tile)
+{
+	return tile * TILE;
+};
+
+function pixelToTile(pixel)
+{
+	return Math.floor(pixel/TILE);
+};
+
+function bound(value, min, max)
+{
+	if(value < min)
+		return min;
+	if(value > max)
+		return max;
+	return value;
+}
 
 function drawMap()
 {
@@ -81,6 +132,30 @@ function drawMap()
  	}
 }
 
+
+var cells = [];
+function initialize() {
+	for(var layerIdx = 0; layerIdx < LAYER_COUNT; layerIdx++) {
+		cells[layerIdx] = [];
+		var idx = 0;
+		for(var y = 0; y < level1.layers[layerIdx].height; y++) {
+			cells[layerIdx][y] = [];
+			for(var x = 0; x < level1.layers[layerIdx].width; x++) {
+				if(level1.layers[layerIdx].data[idx] != 0) {
+					cells[layerIdx][y][x] = 1;
+					cells[layerIdx][y-1][x] = 1;
+					cells[layerIdx][y-1][x+1] = 1;
+					cells[layerIdx][y][x+1] = 1;
+				}
+				else if(cells[layerIdx][y][x] != 1) {
+					cells[layerIdx][y][x] = 0;
+				}
+				idx++;
+			}
+		}
+	}
+}
+
 var splashTimer = 0
 function runSplash(deltaTime)
 {
@@ -97,14 +172,15 @@ function runGame(deltaTime)
 	
 }
 
+
 function run()
 {
 	context.fillStyle = "#ccc";
 	context.fillRect(0, 0, canvas.width, canvas.height);
 
-	drawMap();
+	var deltaTime = getDeltaTime();
 
-	context.drawImage(chuckNorris, SCREEN_WIDTH/2 - chuckNorris.width/2, SCREEN_HEIGHT/2 - chuckNorris.height/2);
+	drawMap();
 
 	player.update(deltaTime);
 	player.draw();
@@ -137,6 +213,8 @@ function run()
                 break;
     }
 }
+
+initialize();
 
 //-------------------- Don't modify anything below here
 // This code will set up the framework so that the 'run' function is
