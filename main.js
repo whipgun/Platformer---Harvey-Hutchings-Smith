@@ -46,7 +46,7 @@ var keyboard = new Keyboard();
  
 //Physics
 var METER = TILE;
-var Gravity = METER * 9.8 * 6;
+var GRAVITY = METER * 9.8 * 6;
 var MAXDX = METER * 10;
 var MAXDY = METER * 15;
 var ACCEL = MAXDX * 2;
@@ -54,6 +54,9 @@ var FRICTION = MAXDX * 6;
 var JUMP = METER * 1500;
  
 var LAYER_COUNT = 3;
+var LAYER_BACKGROUND = 0;
+var LAYER_PLATFORMS = 1;
+var LAYER_LADDERS = 2;
 var MAP = {tw:80, th:20};
 var TILE = 35;
 var TILESET_TILE = TILE * 2;
@@ -81,7 +84,7 @@ function cellAtTileCoord(layer, tx, ty)
 		// let the player drop of the bottom of the screen (this means death)
 	if(ty>=MAP.th)
 		return 0;
-		return cells[layer][ty][tx];
+	return cells[layer][ty][tx];
 };
 function tileToPixel(tile)
 {
