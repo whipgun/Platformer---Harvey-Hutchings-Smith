@@ -54,7 +54,7 @@ var FRICTION = MAXDX * 6;
 var JUMP = METER * 1500;
  
 var LAYER_COUNT = 3;
-var MAP = {tw:60, th:15};
+var MAP = {tw:80, th:20};
 var TILE = 35;
 var TILESET_TILE = TILE * 2;
 var TILESET_PADDING = 2;
@@ -127,29 +127,29 @@ function drawMap()
  
 var cells = []; // the array that holds our simplified collision data
 function initialize() {
- for(var layerIdx = 0; layerIdx < LAYER_COUNT; layerIdx++) { // initialize the collision map
- cells[layerIdx] = [];
- var idx = 0;
- for(var y = 0; y < level1.layers[layerIdx].height; y++) {
- cells[layerIdx][y] = [];
- for(var x = 0; x < level1.layers[layerIdx].width; x++) {
- if(level1.layers[layerIdx].data[idx] != 0) {
- // for each tile we find in the layer data, we need to create 4 collisions
- // (because our collision squares are 35x35 but the tile in the
-// level are 70x70)
- cells[layerIdx][y][x] = 1;
-cells[layerIdx][y-1][x] = 1;
-cells[layerIdx][y-1][x+1] = 1;
-cells[layerIdx][y][x+1] = 1;
- }
- else if(cells[layerIdx][y][x] != 1) {
-// if we haven't set this cell's value, then set it to 0 now
- cells[layerIdx][y][x] = 0;
-}
- idx++;
- }
- }
- }
+ 	for(var layerIdx = 0; layerIdx < LAYER_COUNT; layerIdx++) { // initialize the collision map
+ 		cells[layerIdx] = [];
+ 		var idx = 0;
+ 		for(var y = 0; y < level1.layers[layerIdx].height; y++) {
+ 			cells[layerIdx][y] = [];
+ 			for(var x = 0; x < level1.layers[layerIdx].width; x++) {
+ 				if(level1.layers[layerIdx].data[idx] != 0) {
+ 					// for each tile we find in the layer data, we need to create 4 collisions
+ 					// (because our collision squares are 35x35 but the tile in the
+					// level are 70x70)
+ 					cells[layerIdx][y][x] = 1;
+					cells[layerIdx][y-1][x] = 1;
+					cells[layerIdx][y-1][x+1] = 1;
+					cells[layerIdx][y][x+1] = 1;
+ 				}
+ 				else if(cells[layerIdx][y][x] != 1) {
+					// if we haven't set this cell's value, then set it to 0 now
+ 					cells[layerIdx][y][x] = 0;
+				}
+ 			idx++;
+ 			}
+ 		}
+ 	}
 }
  
 var splashTimer = 0

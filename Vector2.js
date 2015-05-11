@@ -24,17 +24,17 @@ Vector2.Prototype.CheckCollision = function(Vector2 a_other)
 
 Vector2.Prototype.Add = function(a_x,a_y)
 {
-	return ((this.x + a_x),(this.y + a_y));
+	return (this.x + a_x),(this.y + a_y);
 }
 
 Vector2.Prototype.Subtract = function(a_x,a_y)
 {
-	return ((this.x - a_x),(this.y - a_y));
+	return (this.x - a_x),(this.y - a_y);
 }
 
 Vector2.Prototype.MultiplyScalar = function(input)
 {
-	return ((this.x * input),(this.y * input));
+	return (this.x * input),(this.y * input);
 }
 
 Vector2.Prototype.Magnitude = function ()

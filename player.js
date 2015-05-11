@@ -1,7 +1,6 @@
 var Player = function() {
 	this.image = document.createElement("img");
-	this.x = canvas.width/2;
-	this.y = canvas.height/2;
+	this.position = new Vector2();
 	this.width = 159;
 	this.height = 163;
 	this.RotSpeed = 2;
@@ -10,17 +9,7 @@ var Player = function() {
 
 Player.prototype.update = function(deltaTime)
 {
-	if( typeof(this.rotation) == "undefined" )
-		this.rotation = 0;
-	
-	if(keyboard.isKeyDown(keyboard.KEY_SPACE) == true)
-	{
-		this.rotation -= this.RotSpeed * deltaTime;
-	}
-	else
-	{
-		this.rotation += this.RotSpeed * deltaTime;
-	}
+
 }
 
 Player.prototype.draw = function()
