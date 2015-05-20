@@ -1,7 +1,7 @@
 var Player = function() {
 	this.image = document.createElement("img");
 	this.position = new Vector2();
-	this.position.Set( 9*35, 0*35 );
+	this.position.Set( 2*35, 16*35 );
 
 	this.width = 159;
 	this.height = 163;
@@ -94,7 +94,7 @@ Player.prototype.update = function(deltaTime)
 			ny = 0;
 		}
 		if (this.velocity.x > 0) {
-			if ((cellright && !cell) || (celldiag && !celldiag && ny)) {
+			if ((cellright && !cell) || (celldiag && !celldown && ny)) {
 				this.position.x = tileToPixel(tx);
 				this.velocity.x = 0;
 			}
@@ -105,6 +105,15 @@ Player.prototype.update = function(deltaTime)
 				this.velocity.x = 0;
 			}
 		}
+	}
+
+	Player.prototype.draw = function()
+	{
+	context.save();
+		context.translate(this.position.x, this.position.y);
+		context.rotate(this.rotation);
+		context.drawImage(this.image, -this.width/2, -this.height/2);
+	context.restore();
 	}
 }
 

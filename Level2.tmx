@@ -3,7 +3,7 @@
  <tileset firstgid="1" name="Platforms" tilewidth="70" tileheight="70" spacing="2" margin="2">
   <image source="tileset.png" width="1024" height="1024"/>
  </tileset>
- <layer name="Background bits" width="80" height="20" opacity="0.75">
+ <layer name="Background bits" width="80" height="20" opacity="0.73">
   <data>
    <tile gid="0"/>
    <tile gid="0"/>
@@ -1607,7 +1607,7 @@
    <tile gid="0"/>
   </data>
  </layer>
- <layer name="Main" width="80" height="20">
+ <layer name="Platforms" width="80" height="20">
   <data>
    <tile gid="0"/>
    <tile gid="0"/>

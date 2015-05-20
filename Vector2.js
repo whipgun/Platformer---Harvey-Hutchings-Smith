@@ -43,12 +43,12 @@ Vector2.prototype.Magnitude = function ()
 	return Math.sqrt((x*x) + (y*y)) //Gives magnitude of current vector2
 }
 
-Vector2.prototype.Normalized = function ()
+Vector2.prototype.Normalize = function ()
 {
 
 	var rect = new Vector2();
-	ret.x = this.x / this.Magnitude();
-	ret.y = this.y / this.Magnitude();
+	rect.x = this.x / this.Magnitude();
+	rect.y = this.y / this.Magnitude();
 
 	return ret;
 }
