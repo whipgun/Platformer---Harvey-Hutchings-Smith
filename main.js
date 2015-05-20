@@ -44,10 +44,12 @@ chuckNorris.src = "hero.png";
 var player = new Player();
 var keyboard = new Keyboard();
  
-var LAYER_COUNT = 2;
+var LAYER_COUNT = 5;
 var LAYER_BACKGROUND = 0;
 var LAYER_PLATFORMS = 1;
-var LAYER_LADDERS = 2;
+var LAYER_WATER = 2;
+var LAYER_LAVA = 3;
+var LAYER_LADDERS = 4;
 
 var MAP = {tw:80, th:20};
 var TILE = 35;
