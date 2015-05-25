@@ -56,6 +56,8 @@ var Player = function() {
 
 	this.falling = true;
 	this.jumping = false;
+
+	this.cooldownTimer = 0;
 };
 
 Player.prototype.update = function(deltaTime)
@@ -96,8 +98,17 @@ Player.prototype.update = function(deltaTime)
 		}
 	}
 	
-	if(keyboard.isKeyDown(keyboard.KEY_SPACE) == true) {
+	if(keyboard.isKeyDown(keyboard.KEY_UP) == true) {
 		jump = true;
+	}
+
+	if(this.cooldownTimer>0)
+	{
+		this.cooldownTimer -= deltaTime;
+	}
+	if(keyboard.isKeyDown(keyboard.KEY_SPACE) == true && this.cooldownTimer <= 0) {
+		sfxFire.play();
+		this.cooldownTimer = 0.3;
 	}
 
 	var wasleft = this.velocity.x < 0;
@@ -180,8 +191,6 @@ Player.prototype.update = function(deltaTime)
 
 	Player.prototype.draw = function()
 	{
-		context.save();
-			this.sprite.draw(context, this.position.x, this.position.y);
-		context.restore();
+			this.sprite.draw(context, this.position.x - worldOffsetX, this.position.y);
 	}
 }

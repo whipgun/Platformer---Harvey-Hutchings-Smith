@@ -38,9 +38,6 @@ var fps = 0;
 var fpsCount = 0;
 var fpsTime = 0;
  
-var chuckNorris = document.createElement("img");
-chuckNorris.src = "hero.png";
- 
 var player = new Player();
 var keyboard = new Keyboard();
  
@@ -50,6 +47,9 @@ var LAYER_PLATFORMS = 1;
 var LAYER_WATER = 2;
 var LAYER_LAVA = 3;
 var LAYER_LADDERS = 4;
+
+var LAYER_OBJECT_ENEMIES = 5;
+//var LAYER_OBJECT_TRIGGERS = 6;
 
 var MAP = {tw:80, th:20};
 var TILE = 35;
@@ -67,6 +67,17 @@ var MAXDY = METER * 15;
 var ACCEL = MAXDX * 2;
 var FRICTION = MAXDX * 6;
 var JUMP = METER * 1500;
+
+var ENEMY_MAXDX = METER * 5;
+var ENEMY_ACCEL = ENEMY_MAXDX * 2;
+
+var enemies = [];
+
+var score = 0;
+var lives = 3;
+
+var heartImage = document.createElement("img");
+heartImage.src = "Heart.png";
  
 var tileset = document.createElement("img");
 tileset.src = "tileset.png";
@@ -106,36 +117,70 @@ function bound(value, min, max)
 		return value;
 }
  
- 
+var worldOffsetX = 0;
 function drawMap()
 {
-        for(var layerIdx=0; layerIdx<LAYER_COUNT; layerIdx++)
+    var startX = -1;
+    var maxTiles = Math.floor(SCREEN_WIDTH / TILE) + 2;
+    var tileX = pixelToTile(player.position.x);
+    var offsetX = TILE + Math.floor(player.position.x%TILE);
+
+    startX = tileX - Math.floor(maxTiles / 2);
+
+    if(startX < -1)
+    {
+        startX = 0;
+        offsetX = 0;
+    }
+    if(startX > MAP.tw - maxTiles)
+    {
+        startX = MAP.tw - maxTiles + 1;
+        offsetX = TILE;
+    }
+
+    worldOffsetX = startX * TILE + offsetX;
+
+    for(var layerIdx=0; layerIdx<LAYER_COUNT; layerIdx++)
+    {
+        for( var y = 0; y < level1.layers[layerIdx].height; y++ )
         {
-                var idx = 0;
-                for( var y = 0; y < level1.layers[layerIdx].height; y++ )
+            var idx = y * level1.layers[layerIdx].width + startX;
+            for( var x = startX; x < startX + maxTiles; x++ )
+            {
+                if( level1.layers[layerIdx].data[idx] != 0 )
                 {
-                        for( var x = 0; x < level1.layers[layerIdx].width; x++ )
-                        {
-                                if( level1.layers[layerIdx].data[idx] != 0 )
-                                {
-                                        // the tiles in the Tiled map are base 1 (meaning a value of 0 means no tile), so subtract one from the tileset id to get the
-                                        // correct tile
-                                        var tileIndex = level1.layers[layerIdx].data[idx] - 1;
-                                        var sx = TILESET_PADDING + (tileIndex % TILESET_COUNT_X) * (TILESET_TILE + TILESET_SPACING);
-                                        var sy = TILESET_PADDING + (Math.floor(tileIndex / TILESET_COUNT_Y)) * (TILESET_TILE + TILESET_SPACING);
-                                        context.drawImage(tileset, sx, sy, TILESET_TILE, TILESET_TILE, x*TILE, (y-1)*TILE, TILESET_TILE, TILESET_TILE);
-                                }
-                                idx++;
-                        }
+                    // the tiles in the Tiled map are base 1 (meaning a value of 0 means no tile), so subtract one from the tileset id to get the
+                    // correct tile
+                    var tileIndex = level1.layers[layerIdx].data[idx] - 1;
+                    var sx = TILESET_PADDING + (tileIndex % TILESET_COUNT_X) * (TILESET_TILE + TILESET_SPACING);
+                    var sy = TILESET_PADDING + (Math.floor(tileIndex / TILESET_COUNT_Y)) * (TILESET_TILE + TILESET_SPACING);
+                    context.drawImage(tileset, sx, sy, TILESET_TILE, TILESET_TILE, (x-startX)*TILE - offsetX, (y-1)*TILE, TILESET_TILE, TILESET_TILE);
                 }
+                idx++;
+            }
         }
+    }
 }
  
+var musicBackground;
+var sfxFire;
+
 var cells = []; // the array that holds our simplified collision data
 function initialize() {
  	for(var layerIdx = 0; layerIdx < LAYER_COUNT; layerIdx++) { // initialize the collision map
  		cells[layerIdx] = [];
  		var idx = 0;
+        for(var y = 0; y < level1.layers[LAYER_OBJECT_ENEMIES].height; y++) {
+            for(var x = 0; x < level1.layers[LAYER_OBJECT_ENEMIES].width; x++) {
+                if(level1.layers[LAYER_OBJECT_ENEMIES].data[idx] != 0) {
+                    var px = tileToPixel(x);
+                    var py = tileToPixel(y);
+                    var e = new Enemy(px, py);
+                    enemies.push(e)
+                }
+                idx++
+            }
+        }
  		for(var y = 0; y < level1.layers[layerIdx].height; y++) {
  			cells[layerIdx][y] = [];
  			for(var x = 0; x < level1.layers[layerIdx].width; x++) {
@@ -156,6 +201,38 @@ function initialize() {
  			}
  		}
  	}
+
+    /*idx = 0;
+    for(var y = 0; y < level1.layers[LAYER_OBJECT_ENEMIES].height; y++) {
+        for(var x = 0; x < level1.layers[LAYER_OBJECT_ENEMIES].width; x++) {
+            if(level1.layers[LAYER_OBJECT_ENEMIES].data[idx] != 0) {
+                var px = tileToPixel(x);
+                var py = tileToPixel(y);
+                var e = new Enemy(px, py);
+                enemies.push(e)
+            }
+            idx++
+        }
+    }*/
+
+    musicBackground = new Howl(
+    {
+        urls: ["background.ogg"],
+        loop: true,
+        buffer: true,
+        volume: 0.5
+    } );
+    //musicBackground.play();
+
+    sfxFire = new Howl(
+    {
+        urls: ["fireEffect.ogg"],
+        buffer: true,
+        volume: 1,
+        onend: function() {
+            isSfxPlaying = false;
+        }
+    } );
 }
  
 var splashTimer = 0
@@ -181,10 +258,30 @@ function run()
  
         var deltaTime = getDeltaTime();
  
-        drawMap();
-
         player.update(deltaTime);
+
+        for(var i=0; i<enemies.length; i++)
+        {
+            enemies[i].update(deltaTime);
+        }
+
+        drawMap();
         player.draw();
+        for(var i=0; i<enemies.length; i++)
+        {
+            enemies[i].draw(deltaTime);
+        }
+
+        context.fillStyle = "yellow";
+        context.font = "32px Arial";
+        var scoreText = "Score: " + score;
+        context.fillText(scoreText,SCREEN_WIDTH - 170, 35);
+
+        for(var i=0; i<lives; i++)
+        {
+            context.drawImage(heartImage, 20+ ((heartImage.width+2)*i), 10);
+        }
+
  
         //update frame counter
         fpsTime += deltaTime;
