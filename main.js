@@ -49,7 +49,7 @@ var LAYER_LAVA = 3;
 var LAYER_LADDERS = 4;
 
 var LAYER_OBJECT_ENEMIES = 5;
-//var LAYER_OBJECT_TRIGGERS = 6;
+var LAYER_OBJECT_TRIGGERS = 6;
 
 var MAP = {tw:80, th:20};
 var TILE = 35;
