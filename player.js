@@ -56,8 +56,6 @@ var Player = function() {
 
 	this.falling = true;
 	this.jumping = false;
-
-	this.cooldownTimer = 0;
 };
 
 Player.prototype.update = function(deltaTime)
@@ -102,13 +100,14 @@ Player.prototype.update = function(deltaTime)
 		jump = true;
 	}
 
-	if(this.cooldownTimer>0)
+	if(cooldownTimer>0)
 	{
-		this.cooldownTimer -= deltaTime;
+		cooldownTimer -= deltaTime;
 	}
-	if(keyboard.isKeyDown(keyboard.KEY_SPACE) == true && this.cooldownTimer <= 0) {
+	if(keyboard.isKeyDown(keyboard.KEY_SPACE) == true && cooldownTimer <= 0) {
 		sfxFire.play();
-		this.cooldownTimer = 0.3;
+		cooldownTimer = 0.3;
+		playerShoot();
 	}
 
 	var wasleft = this.velocity.x < 0;
@@ -187,6 +186,14 @@ Player.prototype.update = function(deltaTime)
 				this.velocity.x = 0;
 			}
 		}
+
+	//ladders!
+
+	/*if(right = false && left = false && falling = false)
+	{
+		cell = 
+	}*/
+
 	}
 
 	Player.prototype.draw = function()

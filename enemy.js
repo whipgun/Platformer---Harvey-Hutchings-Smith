@@ -63,3 +63,7 @@ Enemy.prototype.update = function(dt)
 	this.velocity.x = bound(this.velocity.x + (dt * ddx),
 		-ENEMY_MAXDX, ENEMY_MAXDX);
 }
+Enemy.prototype.draw = function()
+{
+	this.sprite.draw(context, this.position.x - worldOffsetX, this.position.y);
+}

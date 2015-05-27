@@ -37,6 +37,9 @@ var SCREEN_HEIGHT = canvas.height;
 var fps = 0;
 var fpsCount = 0;
 var fpsTime = 0;
+
+
+var cooldownTimer = 0;
  
 var player = new Player();
 var keyboard = new Keyboard();
@@ -72,6 +75,7 @@ var ENEMY_MAXDX = METER * 5;
 var ENEMY_ACCEL = ENEMY_MAXDX * 2;
 
 var enemies = [];
+var bullets = [];
 
 var score = 0;
 var lives = 3;
@@ -259,6 +263,33 @@ function run()
         for(var i=0; i<enemies.length; i++)
         {
             enemies[i].draw(deltaTime);
+        }
+
+        var hit=false;
+        for(var i=0; i<bullets.length; i++)
+        {
+            bullets[i].update(deltaTime);
+            if(bullets[i].position.x - worldOffsetX < 0 ||
+                bullets[i].position.x - worldOffsetX > SCREEN_WIDTH)
+            {
+                hit = true;
+            }
+
+            for(var j=0; j<enemies.length; j++)
+            {
+                if(intersects(bullets[i].position.x, bullets[i].position.y, TILE, TILE) == true)
+                {
+                    enemies.splice(j, 1);
+                    hit = true;
+                    score += 1;
+                    break;
+                }
+            }
+            if(hit == true)
+            {
+                bullets.splice(i, 1);
+                break;
+            }
         }
 
         context.fillStyle = "yellow";
