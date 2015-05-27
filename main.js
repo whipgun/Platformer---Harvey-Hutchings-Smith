@@ -170,17 +170,6 @@ function initialize() {
  	for(var layerIdx = 0; layerIdx < LAYER_COUNT; layerIdx++) { // initialize the collision map
  		cells[layerIdx] = [];
  		var idx = 0;
-        for(var y = 0; y < level1.layers[LAYER_OBJECT_ENEMIES].height; y++) {
-            for(var x = 0; x < level1.layers[LAYER_OBJECT_ENEMIES].width; x++) {
-                if(level1.layers[LAYER_OBJECT_ENEMIES].data[idx] != 0) {
-                    var px = tileToPixel(x);
-                    var py = tileToPixel(y);
-                    var e = new Enemy(px, py);
-                    enemies.push(e)
-                }
-                idx++
-            }
-        }
  		for(var y = 0; y < level1.layers[layerIdx].height; y++) {
  			cells[layerIdx][y] = [];
  			for(var x = 0; x < level1.layers[layerIdx].width; x++) {
@@ -202,7 +191,7 @@ function initialize() {
  		}
  	}
 
-    /*idx = 0;
+    idx = 0;
     for(var y = 0; y < level1.layers[LAYER_OBJECT_ENEMIES].height; y++) {
         for(var x = 0; x < level1.layers[LAYER_OBJECT_ENEMIES].width; x++) {
             if(level1.layers[LAYER_OBJECT_ENEMIES].data[idx] != 0) {
@@ -213,7 +202,7 @@ function initialize() {
             }
             idx++
         }
-    }*/
+    }
 
     musicBackground = new Howl(
     {
