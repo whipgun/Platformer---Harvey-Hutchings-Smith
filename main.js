@@ -241,7 +241,7 @@ function initialize() {
         buffer: true,
         volume: 0.5
     } );
-    //musicBackground.play();
+    musicBackground.play();
 
     sfxFire = new Howl(
     {
@@ -370,6 +370,7 @@ function runGame(deltaTime)
 
     if(lives <= 0)
     {
+        sfxDamage.play();
         gameState = STATE_GAMEOVER;
     }
  
@@ -404,6 +405,8 @@ function runGameWin()
 
 function runGameOver()
 {
+
+
     var title = document.createElement("img");
     title.src = "gameover.png";
 
