@@ -10,27 +10,28 @@ var Bullet = function(x, y, moveRight)
 
 	this.velocity = new Vector2();
 
+	var BULLET_SPEED = 450;
+
 	this.moveRight = moveRight;
+	this.moveLeft = true;
 	if(this.moveRight == true)
-		this.velocity.set(MAXDX *2, 0);
+		this.velocity.Set(-MAXDX *2, 0);
 	else
-		this.velocity.set(-MAXDX *2, 0);
+		this.velocity.Set(MAXDX *2, 0);
 }
 
-function playerShoot()
+Bullet.prototype.update = function(deltaTime)
 {
-	bullets.push(Enemy);
-}
-
-
-Bullet.prototype.update = function(dt)
-{
-	this.sprite.update(dt);
-	this.position.x = Math.floor(this.position.x + (dt * this.velocity.x));
+	//this.sprite.update(dt);
+	this.position.x = Math.floor(this.position.x + (deltaTime * this.velocity.x));
 }
 
 Bullet.prototype.draw = function()
 {
 	var screenX = this.position.x - worldOffsetX;
-	this.sprite.draw(context, screenX, this.position.y);
+
+	context.save();
+		context.translate(player.x, player.y);
+		this.sprite.draw(context, screenX, this.position.y);
+		context.restore();
 }

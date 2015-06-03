@@ -12,6 +12,8 @@ var ANIM_WALK_RIGHT = 7;
 var ANIM_SHOOT_RIGHT = 8;
 var ANIM_MAX = 9;
 
+var bullets = [];
+
 var Player = function() {
 	this.sprite = new Sprite("ChuckNorris.png");
 	this.sprite.buildAnimation(12, 8, 165, 126, 0.05,               //idle left
@@ -47,7 +49,7 @@ var Player = function() {
 	}
 
 	this.position = new Vector2();
-	this.position.Set( 2*35, 16*35 );
+	this.position.Set( 2*35, 17*35 );
 
 	this.width = 159;
 	this.height = 163;
@@ -56,6 +58,8 @@ var Player = function() {
 
 	this.falling = true;
 	this.jumping = false;
+
+	this.isDead = false;
 };
 
 Player.prototype.update = function(deltaTime)
@@ -107,7 +111,34 @@ Player.prototype.update = function(deltaTime)
 	if(keyboard.isKeyDown(keyboard.KEY_SPACE) == true && cooldownTimer <= 0) {
 		sfxFire.play();
 		cooldownTimer = 0.3;
-		playerShoot();
+		
+		var	tempBullet = new Bullet((this.position.x), this.position.y);
+		if(this.direction == LEFT)
+		{
+			left = true;
+			if(this.sprite.currentAnimation != ANIM_SHOOT_LEFT)
+				this.sprite.setAnimation(ANIM_SHOOT_LEFT);
+		}
+		else
+		{
+			right = true;
+			if(this.sprite.currentAnimation != ANIM_SHOOT_RIGHT)
+				this.sprite.setAnimation(ANIM_SHOOT_RIGHT);
+		}
+
+		if(right == true)
+		{
+			tempBullet.velocity.x = 400;
+			tempBullet.position.x += 80; 
+		}
+		else
+		{
+			tempBullet.velocity.x = -400; 
+			tempBullet.position.x -= 50; 
+		}
+									
+		cooldownTimer = 0.5;			
+		bullets.push(tempBullet);		
 	}
 
 	var wasleft = this.velocity.x < 0;
@@ -186,14 +217,27 @@ Player.prototype.update = function(deltaTime)
 				this.velocity.x = 0;
 			}
 		}
+	}
 
-	//ladders!
-
-	/*if(right = false && left = false && falling = false)
+	if((this.position.x - worldOffsetX) > (SCREEN_WIDTH - this.position.width) + 45)
 	{
-		cell = 
-	}*/
+		this.position.x = (SCREEN_WIDTH - this.width);
+	}
 
+	if(this.position.x < 40)
+	{
+		this.position.x = 40;
+	}
+
+	if(cellAtTileCoord(LAYER_OBJECT_TRIGGERS, tx, ty) == true)
+	{
+		gameState = STATE_GAMEWIN;
+	}
+
+	if(this.position.y > SCREEN_HEIGHT)
+	{
+		lives -= 1;
+		this.position.Set(2*35, 17*35);
 	}
 
 	Player.prototype.draw = function()

@@ -13,13 +13,13 @@ var Enemy = function(x, y)
 	this.pause = 0;
 }
 
-Enemy.prototype.update = function(dt)
+Enemy.prototype.update = function(deltaTime)
 {
-	this.sprite.update(dt);
+	this.sprite.update(deltaTime);
 
 	if(this.pause > 0)
 	{
-		this.pause -= dt;
+		this.pause -= deltaTime;
 	}
 	else
 	{
@@ -34,7 +34,6 @@ Enemy.prototype.update = function(dt)
 		var cellright = cellAtTileCoord(LAYER_PLATFORMS, tx + 1, ty);
 		var celldown = cellAtTileCoord(LAYER_PLATFORMS, tx, ty + 1);
 		var celldiag = cellAtTileCoord(LAYER_PLATFORMS, tx + 1, ty + 1);
-	}
 	if(this.moveRight)
 	{
 		if(celldiag && !cellright) {
@@ -59,9 +58,10 @@ Enemy.prototype.update = function(dt)
 		}
 	}
 	
-	this.position.x = Math.floor(this.position.x + (dt * this.velocity.x));
-	this.velocity.x = bound(this.velocity.x + (dt * ddx),
+	this.position.x = Math.floor(this.position.x + (deltaTime * this.velocity.x));
+	this.velocity.x = bound(this.velocity.x + (deltaTime * ddx),
 		-ENEMY_MAXDX, ENEMY_MAXDX);
+	}
 }
 Enemy.prototype.draw = function()
 {
