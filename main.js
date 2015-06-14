@@ -42,7 +42,6 @@ var fps = 0;
 var fpsCount = 0;
 var fpsTime = 0;
 
-
 var cooldownTimer = 0;
  
 var player = new Player();
